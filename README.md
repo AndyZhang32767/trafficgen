@@ -26,12 +26,19 @@
 
 ## 快速开始
 
-### 1. 服务端（Linux VPS）
-
-需要已安装 Go（`apt install golang` 或 https://go.dev/dl/）。把整个项目拷到服务器，然后：
+### 1. 服务端（Linux VPS，一行部署）
 
 ```bash
-cd "send data"
+curl -fsSL https://raw.githubusercontent.com/AndyZhang32767/trafficgen/main/scripts/install.sh | sudo bash
+```
+
+会自动安装依赖、编译并做成开机自启服务。完成后浏览器打开 `http://你的服务端IP:8080/`。
+换端口：`PORT=9090 curl -fsSL https://raw.githubusercontent.com/AndyZhang32767/trafficgen/main/scripts/install.sh | sudo bash`
+（记得在云厂商安全组/防火墙放行对应端口。）
+
+本地已有代码时也可以：
+
+```bash
 sudo scripts/deploy.sh server
 ```
 
