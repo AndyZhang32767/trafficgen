@@ -6,7 +6,7 @@ Wants=network-online.target
 [Service]
 Type=simple
 WorkingDirectory=/opt/trafficgen
-ExecStart=/opt/trafficgen/server -addr :8080 -stats /opt/trafficgen/stats.json
+ExecStart=/opt/trafficgen/server -addr :54430 -stats /opt/trafficgen/stats.json
 Restart=always
 RestartSec=2
 # 断电/崩溃/被杀后自动拉起；统计文件保证累计与当月流量续上

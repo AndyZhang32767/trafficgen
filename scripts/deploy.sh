@@ -2,7 +2,7 @@
 # 一键部署脚本：在 Linux 服务器上编译并把 server/client 装成开机自启服务。
 # 用法:
 #   服务端:  sudo ./deploy.sh server
-#   客户端:  sudo ./deploy.sh client http://SERVER_IP:8080/stream 4
+#   客户端:  sudo ./deploy.sh client http://SERVER_IP:54430/stream 4
 set -e
 
 ROLE="${1:-}"
@@ -27,15 +27,15 @@ case "$ROLE" in
     install -m644 "$HERE/scripts/trafficgen-server.service" /etc/systemd/system/
     systemctl daemon-reload
     systemctl enable --now trafficgen-server
-    echo "服务端已启动。面板: http://<本机IP>:8080/  ，刷流量入口: /stream"
+    echo "服务端已启动。面板: http://<本机IP>:54430/  ，刷流量入口: /stream"
     systemctl status trafficgen-server --no-pager -l | head -n 5
     ;;
   client)
     URL="${2:-}"
     CONN="${3:-4}"
-    if [ -z "$URL" ]; then echo "用法: sudo ./deploy.sh client http://SERVER_IP:8080/stream [并发]"; exit 1; fi
+    if [ -z "$URL" ]; then echo "用法: sudo ./deploy.sh client http://SERVER_IP:54430/stream [并发]"; exit 1; fi
     build client
-    sed "s#http://SERVER_IP:8080/stream#$URL#; s#-c 4#-c $CONN#" \
+    sed "s#http://SERVER_IP:54430/stream#$URL#; s#-c 4#-c $CONN#" \
       "$HERE/scripts/trafficgen-client.service" > /etc/systemd/system/trafficgen-client.service
     systemctl daemon-reload
     systemctl enable --now trafficgen-client

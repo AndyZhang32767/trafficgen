@@ -58,12 +58,12 @@ func fmtSpeed(bps uint64) string {
 }
 
 func main() {
-	url := flag.String("url", "", "服务端流地址，例如 http://1.2.3.4:8080/stream")
+	url := flag.String("url", "", "服务端流地址，例如 http://1.2.3.4:54430/stream")
 	conns := flag.Int("c", 4, "并发连接数（越多刷得越快，注意别打满自己带宽）")
 	flag.Parse()
 
 	if *url == "" {
-		log.Fatal("必须指定 -url，例如 -url http://1.2.3.4:8080/stream")
+		log.Fatal("必须指定 -url，例如 -url http://1.2.3.4:54430/stream")
 	}
 
 	for i := 0; i < *conns; i++ {

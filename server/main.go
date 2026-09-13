@@ -112,7 +112,7 @@ func dashboardHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	addr := flag.String("addr", ":8080", "监听地址，例如 :8080")
+	addr := flag.String("addr", ":54430", "监听地址，例如 :54430")
 	flag.StringVar(&statsPath, "stats", "stats.json", "统计数据持久化文件路径")
 	flag.Parse()
 

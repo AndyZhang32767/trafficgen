@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # 一行部署服务端（可 curl | sudo bash）。
-# 可选环境变量: PORT=8080
+# 可选环境变量: PORT=54430
 set -euo pipefail
 
-PORT="${PORT:-8080}"
+PORT="${PORT:-54430}"
 DEST=/opt/trafficgen
 REPO="https://github.com/AndyZhang32767/trafficgen.git"
 GO_VER="1.22.12"
@@ -79,7 +79,7 @@ fi
 echo "编译服务端 ..."
 ( cd "$DEST/src" && go build -o "$DEST/server" ./server )
 
-sed "s/:8080/:${PORT}/g" "$DEST/src/scripts/trafficgen-server.service" \
+sed "s/:54430/:${PORT}/g" "$DEST/src/scripts/trafficgen-server.service" \
   > /etc/systemd/system/trafficgen-server.service
 
 systemctl daemon-reload

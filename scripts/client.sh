@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # 纯 curl 版客户端：无需 Go，直接持续下载并丢弃，断线自动重连。
-# 用法: ./client.sh http://SERVER_IP:8080/stream [并发数]
+# 用法: ./client.sh http://SERVER_IP:54430/stream [并发数]
 set -u
 
 URL="${1:-}"
 CONN="${2:-4}"
 
 if [ -z "$URL" ]; then
-  echo "用法: $0 http://SERVER_IP:8080/stream [并发数]"
+  echo "用法: $0 http://SERVER_IP:54430/stream [并发数]"
   exit 1
 fi
 
