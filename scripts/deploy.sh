@@ -14,6 +14,20 @@ if ! command -v go >/dev/null 2>&1; then
   exit 1
 fi
 
+already_installed() {
+  [ -x "$DEST/server" ] || [ -x "$DEST/client" ] || [ -f /etc/systemd/system/trafficgen-server.service ] || [ -f /etc/systemd/system/trafficgen-client.service ]
+}
+
+if already_installed && [ "${FORCE:-}" != "1" ]; then
+  echo "检测到已安装 trafficgen（$DEST）。"
+  echo -n "是否覆盖更新？[y/N] "
+  read -r ans || true
+  case "$ans" in
+    y|Y|yes|YES) echo "开始覆盖更新..." ;;
+    *) echo "已中止，未做更改。"; exit 1 ;;
+  esac
+fi
+
 mkdir -p "$DEST"
 
 build() {

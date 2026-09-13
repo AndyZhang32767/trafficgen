@@ -13,6 +13,37 @@ if [ "$(id -u)" -ne 0 ]; then
   exit 1
 fi
 
+already_installed() {
+  [ -x "$DEST/server" ] || [ -d "$DEST/src" ] || [ -f /etc/systemd/system/trafficgen-server.service ]
+}
+
+confirm_overwrite() {
+  if ! already_installed; then
+    return 0
+  fi
+  if [ "${FORCE:-}" = "1" ]; then
+    echo "检测到已安装，FORCE=1，将覆盖更新。"
+    return 0
+  fi
+  echo "检测到已安装 trafficgen（$DEST）。"
+  echo -n "是否覆盖更新？[y/N] "
+  local ans=""
+  if [ -r /dev/tty ]; then
+    read -r ans < /dev/tty || true
+  else
+    echo
+    echo "无法读取终端输入。要覆盖请加 FORCE=1 后重试。"
+    exit 1
+  fi
+  case "$ans" in
+    y|Y|yes|YES) echo "开始覆盖更新..." ;;
+    *) echo "已中止，未做更改。"; exit 1 ;;
+  esac
+}
+
+confirm_overwrite
+systemctl stop trafficgen-server 2>/dev/null || true
+
 export DEBIAN_FRONTEND=noninteractive
 export PATH="/usr/local/go/bin:$PATH"
 
