@@ -57,13 +57,13 @@ const dashboardHTML = `<!DOCTYPE html>
       <div class="ctrl">
         <span class="status"><span class="dot" id="dot"></span><span id="state">已停止</span></span>
         <label class="status">并发连接
-          <input type="number" id="conns" value="6" min="1" max="64">
+          <input type="number" id="conns" value="3" min="1" max="64">
         </label>
         <button id="toggle">开始刷流量</button>
       </div>
     </div>
   </div>
-  <div class="foot">打开本页即可作为客户端连接 · 数据到达即丢弃 · 断线自动重连</div>
+  <div class="foot">点“开始刷流量”后本浏览器即作为客户端连接 · 数据到达即丢弃 · 断线自动重连</div>
 </div>
 <script>
 function fmtBytes(n){
@@ -81,11 +81,18 @@ function fmtSpeed(bps){
 }
 
 // ---- 服务端统计轮询 ----
+// 速率由累计字节的时间差算出，轮询间隔不均也能得到正确均值，避免缓冲导致的假高/卡顿。
+let lastTotal=null, lastT=0;
 async function tick(){
   try{
     const r=await fetch('/stats',{cache:'no-store'});
     const d=await r.json();
-    document.getElementById('speed').innerHTML=fmtSpeed(d.speed);
+    const now=performance.now();
+    if(lastTotal!==null && now>lastT){
+      const bps=(d.total-lastTotal)/((now-lastT)/1000);
+      document.getElementById('speed').innerHTML=fmtSpeed(Math.max(0,bps));
+    }
+    lastTotal=d.total; lastT=now;
     document.getElementById('monthly').innerHTML=fmtBytes(d.monthly);
     document.getElementById('total').innerHTML=fmtBytes(d.total);
     document.getElementById('month').textContent='('+d.month+')';
@@ -122,10 +129,12 @@ async function puller(){
 function start(){
   if(running) return;
   running=true;
-  let n=Math.max(1,Math.min(64,parseInt(document.getElementById('conns').value)||6));
-  for(let i=0;i<n;i++) puller();
+  let n=Math.max(1,Math.min(64,parseInt(document.getElementById('conns').value)||3));
+  // 浏览器对同源 HTTP/1.1 最多约 6 个连接，留一个槽给面板刷新，避免速率显示卡住
+  let eff=Math.min(n,5);
+  for(let i=0;i<eff;i++) puller();
   document.getElementById('dot').classList.add('on');
-  document.getElementById('state').textContent='运行中 · '+n+' 连接';
+  document.getElementById('state').textContent='运行中 · '+eff+' 连接'+(eff<n?'（浏览器上限已封顶）':'');
   const b=document.getElementById('toggle'); b.textContent='停止'; b.classList.add('stop');
 }
 function stop(){
@@ -145,9 +154,6 @@ setInterval(()=>{
   }
   localBytes=0;
 },1000);
-
-// 打开页面即自动连接开始刷流量
-window.addEventListener('load',start);
 </script>
 </body>
 </html>`
