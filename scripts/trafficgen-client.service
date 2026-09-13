@@ -1,0 +1,15 @@
+[Unit]
+Description=Traffic Gen Client (download and drop, keeps traffic flowing)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# 修改成你的服务端地址与并发连接数
+ExecStart=/opt/trafficgen/client -url http://SERVER_IP:8080/stream -c 4
+Restart=always
+RestartSec=2
+# 客户端进程退出/断线后自动重启，配合程序内重连，实现持续刷流量
+
+[Install]
+WantedBy=multi-user.target

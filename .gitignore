@@ -1,0 +1,14 @@
+# 运行时统计与二进制
+stats.json
+stats.json.tmp
+server/server
+client/client
+*.exe
+/server.exe
+/client.exe
+
+# 编辑器与系统
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
